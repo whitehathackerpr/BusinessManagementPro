@@ -155,6 +155,37 @@ export class MemStorage implements IStorage {
       role: "admin",
       branchId: null
     });
+
+    // Create some sample suppliers
+    this.createSupplier({
+      name: "TechSupply Inc.",
+      contactName: "John Doe",
+      email: "john@techsupply.com",
+      phoneNumber: "123-456-7890",
+      address: "123 Tech St, Silicon Valley, CA",
+      taxId: "TS123456",
+      notes: "Reliable supplier of electronic components"
+    });
+
+    this.createSupplier({
+      name: "Office Solutions Ltd.",
+      contactName: "Jane Smith",
+      email: "jane@officesolutions.com",
+      phoneNumber: "456-789-0123",
+      address: "456 Office Blvd, Business Park, NY",
+      taxId: "OS789012",
+      notes: "Office furniture and supplies"
+    });
+
+    this.createSupplier({
+      name: "Global Logistics Partners",
+      contactName: "Robert Johnson",
+      email: "robert@globallogistics.com",
+      phoneNumber: "789-012-3456",
+      address: "789 Shipping Ln, Port City, FL",
+      taxId: "GL345678",
+      notes: "Specializes in international shipping and logistics"
+    });
   }
 
   // User operations
@@ -341,6 +372,88 @@ export class MemStorage implements IStorage {
 
   async deleteCustomer(id: number): Promise<boolean> {
     return this.customers.delete(id);
+  }
+
+  // Supplier operations
+  async getSupplier(id: number): Promise<Supplier | undefined> {
+    return this.suppliers.get(id);
+  }
+
+  async getSupplierByName(name: string): Promise<Supplier | undefined> {
+    return Array.from(this.suppliers.values()).find(
+      supplier => supplier.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  async createSupplier(supplierData: InsertSupplier): Promise<Supplier> {
+    const id = this.supplierIdCounter++;
+    const now = new Date();
+    const supplier: Supplier = {
+      ...supplierData,
+      id,
+      active: true,
+      registeredDate: now
+    };
+    
+    this.suppliers.set(id, supplier);
+    
+    // Log activity
+    await this.createActivityLog({
+      activity: `Supplier ${supplier.name} created`,
+      entityType: 'supplier',
+      entityId: id,
+      userId: null
+    });
+    
+    return supplier;
+  }
+
+  async updateSupplier(id: number, supplierData: Partial<InsertSupplier>): Promise<Supplier | undefined> {
+    const existingSupplier = this.suppliers.get(id);
+    
+    if (!existingSupplier) {
+      return undefined;
+    }
+    
+    const updatedSupplier = {
+      ...existingSupplier,
+      ...supplierData
+    };
+    
+    this.suppliers.set(id, updatedSupplier);
+    
+    // Log activity
+    await this.createActivityLog({
+      activity: `Supplier ${updatedSupplier.name} updated`,
+      entityType: 'supplier',
+      entityId: id,
+      userId: null
+    });
+    
+    return updatedSupplier;
+  }
+
+  async listSuppliers(): Promise<Supplier[]> {
+    return Array.from(this.suppliers.values());
+  }
+
+  async deleteSupplier(id: number): Promise<boolean> {
+    if (!this.suppliers.has(id)) {
+      return false;
+    }
+    
+    const supplier = this.suppliers.get(id);
+    this.suppliers.delete(id);
+    
+    // Log activity
+    await this.createActivityLog({
+      activity: `Supplier ${supplier?.name} deleted`,
+      entityType: 'supplier',
+      entityId: id,
+      userId: null
+    });
+    
+    return true;
   }
 
   // Order operations
