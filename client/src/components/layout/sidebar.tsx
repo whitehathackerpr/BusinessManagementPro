@@ -217,11 +217,9 @@ function NavLink({ href, icon, active, children }: NavLinkProps) {
   const inactiveClasses = "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800";
   
   return (
-    <Link href={href}>
-      <a className={`${baseClasses} ${active ? activeClasses : inactiveClasses}`}>
-        {icon}
-        {children}
-      </a>
+    <Link href={href} className={`${baseClasses} ${active ? activeClasses : inactiveClasses}`}>
+      {icon}
+      {children}
     </Link>
   );
 }
