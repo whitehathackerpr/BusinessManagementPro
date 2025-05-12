@@ -3,7 +3,8 @@ import {
   LayoutDashboard, 
   Users, 
   Package, 
-  MoreHorizontal 
+  MoreHorizontal,
+  Truck
 } from 'lucide-react';
 
 export default function MobileMenu() {
@@ -37,7 +38,7 @@ export default function MobileMenu() {
           href="/more" 
           icon={<MoreHorizontal className="h-5 w-5" />} 
           label="More" 
-          active={['/branches', '/customers', '/orders', '/analytics', '/settings'].includes(location)}
+          active={['/branches', '/customers', '/suppliers', '/orders', '/analytics', '/settings'].includes(location)}
         />
       </div>
     </div>

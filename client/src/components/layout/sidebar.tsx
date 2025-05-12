@@ -12,7 +12,8 @@ import {
   LineChart,
   Settings,
   Moon,
-  Sun
+  Sun,
+  Truck
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -101,6 +102,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             
             <NavLink href="/customers" icon={<UserRound className="mr-3 h-5 w-5" />} active={location === '/customers'}>
               Customers
+            </NavLink>
+            
+            <NavLink href="/suppliers" icon={<Truck className="mr-3 h-5 w-5" />} active={location === '/suppliers'}>
+              Suppliers
             </NavLink>
             
             <NavLink href="/orders" icon={<ShoppingCart className="mr-3 h-5 w-5" />} active={location === '/orders'}>
