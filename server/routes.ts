@@ -468,6 +468,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-powered insights and recommendations
+  app.post("/api/insights", isAuthenticated, async (req, res, next) => {
+    try {
+      const { dataType, timespan } = req.body;
+      
+      // Validate input
+      if (!dataType || !['sales', 'inventory', 'customers', 'overall'].includes(dataType)) {
+        return res.status(400).json({ message: "Invalid data type. Must be one of: sales, inventory, customers, overall." });
+      }
+      
+      if (!timespan || !['day', 'week', 'month', 'quarter', 'year'].includes(timespan)) {
+        return res.status(400).json({ message: "Invalid timespan. Must be one of: day, week, month, quarter, year." });
+      }
+      
+      // Import dynamically to avoid circular dependencies
+      const { 
+        generateSalesInsights, 
+        generateInventoryInsights,
+        generateCustomerInsights,
+        generateOverallInsights 
+      } = await import('./anthropic');
+      
+      let insightsResponse;
+      
+      switch (dataType) {
+        case 'sales':
+          insightsResponse = await generateSalesInsights(timespan);
+          break;
+        case 'inventory':
+          insightsResponse = await generateInventoryInsights(timespan);
+          break;
+        case 'customers':
+          insightsResponse = await generateCustomerInsights(timespan);
+          break;
+        case 'overall':
+        default:
+          insightsResponse = await generateOverallInsights(timespan);
+          break;
+      }
+      
+      // Log activity
+      if (req.user) {
+        await storage.createActivityLog({
+          userId: req.user.id,
+          activity: `Generated ${dataType} insights`,
+          entityType: "analytics",
+          entityId: null,
+        });
+      }
+      
+      res.json(insightsResponse);
+    } catch (error) {
+      console.error('Error generating insights:', error);
+      res.status(500).json({ 
+        message: "Failed to generate insights", 
+        error: error.message 
+      });
+    }
+  });
+
   // Analytics Routes
   app.get("/api/analytics/dashboard", isAuthenticated, async (req, res, next) => {
     try {
