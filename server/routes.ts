@@ -589,6 +589,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Supplier Routes
+  app.get("/api/suppliers", isAuthenticated, async (req, res, next) => {
+    try {
+      const suppliers = await storage.listSuppliers();
+      res.json(suppliers);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/suppliers/:id", isAuthenticated, async (req, res, next) => {
+    try {
+      const supplier = await storage.getSupplier(Number(req.params.id));
+      
+      if (!supplier) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      
+      res.json(supplier);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/suppliers", isAuthenticated, async (req, res, next) => {
+    try {
+      const validatedData = insertSupplierSchema.parse(req.body);
+      const supplier = await storage.createSupplier(validatedData);
+      
+      // Log activity
+      if (req.user) {
+        await storage.createActivityLog({
+          userId: req.user.id,
+          activity: "Supplier created",
+          entityType: "supplier",
+          entityId: supplier.id,
+        });
+      }
+      
+      res.status(201).json(supplier);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ errors: error.errors });
+      }
+      next(error);
+    }
+  });
+
+  app.put("/api/suppliers/:id", isAuthenticated, async (req, res, next) => {
+    try {
+      const validatedData = insertSupplierSchema.partial().parse(req.body);
+      const supplier = await storage.updateSupplier(Number(req.params.id), validatedData);
+      
+      if (!supplier) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      
+      // Log activity
+      if (req.user) {
+        await storage.createActivityLog({
+          userId: req.user.id,
+          activity: "Supplier updated",
+          entityType: "supplier",
+          entityId: supplier.id,
+        });
+      }
+      
+      res.json(supplier);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ errors: error.errors });
+      }
+      next(error);
+    }
+  });
+
+  app.delete("/api/suppliers/:id", isAuthenticated, async (req, res, next) => {
+    try {
+      const success = await storage.deleteSupplier(Number(req.params.id));
+      
+      if (!success) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      
+      // Log activity
+      if (req.user) {
+        await storage.createActivityLog({
+          userId: req.user.id,
+          activity: "Supplier deleted",
+          entityType: "supplier",
+          entityId: Number(req.params.id),
+        });
+      }
+      
+      res.sendStatus(204);
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // Activity Logs Routes
   app.get("/api/activities", isAuthenticated, async (req, res, next) => {
     try {

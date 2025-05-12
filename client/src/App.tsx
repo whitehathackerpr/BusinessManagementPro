@@ -14,6 +14,7 @@ import UsersPage from "@/pages/users-page";
 import BranchesPage from "@/pages/branches-page";
 import InventoryPage from "@/pages/inventory-page";
 import CustomersPage from "@/pages/customers-page";
+import SuppliersPage from "@/pages/suppliers-page";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <ProtectedRoute path="/branches" component={BranchesPage} />
       <ProtectedRoute path="/inventory" component={InventoryPage} />
       <ProtectedRoute path="/customers" component={CustomersPage} />
+      <ProtectedRoute path="/suppliers" component={SuppliersPage} />
       <Route component={NotFound} />
     </Switch>
   );
