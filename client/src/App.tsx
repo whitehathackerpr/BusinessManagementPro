@@ -18,6 +18,7 @@ import SuppliersPage from "@/pages/suppliers-page";
 import OrdersPage from "@/pages/orders-page";
 import AnalyticsPage from "@/pages/analytics-page";
 import SettingsPage from "@/pages/settings-page";
+import AIInsightsPage from "@/pages/ai-insights-page";
 
 function Router() {
   return (
@@ -31,6 +32,7 @@ function Router() {
       <ProtectedRoute path="/suppliers" component={SuppliersPage} />
       <ProtectedRoute path="/orders" component={OrdersPage} />
       <ProtectedRoute path="/analytics" component={AnalyticsPage} />
+      <ProtectedRoute path="/ai-insights" component={AIInsightsPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
