@@ -85,10 +85,27 @@ export default function Header({ openSidebar }: HeaderProps) {
             <DropdownMenuContent align="end">
               {user && (
                 <>
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col">
-                      <span>{user.fullName || user.username}</span>
+                  <DropdownMenuLabel className="pb-2">
+                    <div className="flex flex-col space-y-1">
+                      <span className="font-semibold">{user.fullName || user.username}</span>
                       <span className="text-xs text-muted-foreground">{user.email}</span>
+                      <div className="flex items-center pt-1">
+                        {user.role === 'admin' && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            Administrator
+                          </span>
+                        )}
+                        {user.role === 'manager' && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            Manager
+                          </span>
+                        )}
+                        {user.role === 'user' && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Staff Member
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
