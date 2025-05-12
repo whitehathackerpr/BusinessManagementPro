@@ -5,6 +5,7 @@ import {
   ProductCategory, InsertProductCategory,
   Inventory, InsertInventory,
   Customer, InsertCustomer,
+  Supplier, InsertSupplier,
   Order, InsertOrder,
   OrderItem, InsertOrderItem,
   ActivityLog, InsertActivityLog
@@ -58,6 +59,14 @@ export interface IStorage {
   listCustomers(): Promise<Customer[]>;
   deleteCustomer(id: number): Promise<boolean>;
 
+  // Supplier operations
+  getSupplier(id: number): Promise<Supplier | undefined>;
+  getSupplierByName(name: string): Promise<Supplier | undefined>;
+  createSupplier(supplier: InsertSupplier): Promise<Supplier>;
+  updateSupplier(id: number, supplier: Partial<InsertSupplier>): Promise<Supplier | undefined>;
+  listSuppliers(): Promise<Supplier[]>;
+  deleteSupplier(id: number): Promise<boolean>;
+
   // Order operations
   getOrder(id: number): Promise<Order | undefined>;
   createOrder(order: InsertOrder): Promise<Order>;
@@ -85,6 +94,7 @@ export class MemStorage implements IStorage {
   private products: Map<number, Product>;
   private inventory: Map<number, Inventory>;
   private customers: Map<number, Customer>;
+  private suppliers: Map<number, Supplier>;
   private orders: Map<number, Order>;
   private orderItems: Map<number, OrderItem>;
   private activityLogs: Map<number, ActivityLog>;
@@ -96,6 +106,7 @@ export class MemStorage implements IStorage {
   private productIdCounter: number;
   private inventoryIdCounter: number;
   private customerIdCounter: number;
+  private supplierIdCounter: number;
   private orderIdCounter: number;
   private orderItemIdCounter: number;
   private activityLogIdCounter: number;
@@ -110,6 +121,7 @@ export class MemStorage implements IStorage {
     this.products = new Map();
     this.inventory = new Map();
     this.customers = new Map();
+    this.suppliers = new Map();
     this.orders = new Map();
     this.orderItems = new Map();
     this.activityLogs = new Map();
@@ -120,6 +132,7 @@ export class MemStorage implements IStorage {
     this.productIdCounter = 1;
     this.inventoryIdCounter = 1;
     this.customerIdCounter = 1;
+    this.supplierIdCounter = 1;
     this.orderIdCounter = 1;
     this.orderItemIdCounter = 1;
     this.activityLogIdCounter = 1;

@@ -127,6 +127,23 @@ export const activityLogs = pgTable("activity_logs", {
 export const insertActivityLogSchema = createInsertSchema(activityLogs)
   .omit({ id: true, timestamp: true });
 
+// Supplier Schema
+export const suppliers = pgTable("suppliers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  contactName: text("contact_name"),
+  email: text("email").unique(),
+  phoneNumber: text("phone_number"),
+  address: text("address"),
+  taxId: text("tax_id"),
+  notes: text("notes"),
+  active: boolean("active").notNull().default(true),
+  registeredDate: timestamp("registered_date").defaultNow(),
+});
+
+export const insertSupplierSchema = createInsertSchema(suppliers)
+  .omit({ id: true, active: true, registeredDate: true });
+
 // Define types for database models
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -145,6 +162,9 @@ export type InsertInventory = z.infer<typeof insertInventorySchema>;
 
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
+
+export type Supplier = typeof suppliers.$inferSelect;
+export type InsertSupplier = z.infer<typeof insertSupplierSchema>;
 
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
